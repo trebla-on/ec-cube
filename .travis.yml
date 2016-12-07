@@ -61,6 +61,7 @@ before_script:
   - composer install --dev --no-interaction -o
   - php ./eccube_install.php $DB none
   - mailcatcher
+  - php ./app/console orm:generate:proxies
 
 script: # PHP7 + precise のテストは実行されない
   - if [[ $PHP_SAPI = 'phpdbg' ]] && [[ $CODENAME = 'trusty' ]]; then phpdbg -qrr ./vendor/bin/phpunit --coverage-clover=coverage.clover ; fi

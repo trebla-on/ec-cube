@@ -31,5 +31,8 @@ $console->add(new Eccube\Command\RouterCommand($app));
 $console->add(new Eccube\Command\CacheClearCommand($app));
 $console->add(new Eccube\Command\PluginCommand($app));
 $console->add(new Eccube\Command\ConfigCommand());
+$console->add(new \Doctrine\ORM\Tools\Console\Command\EnsureProductionSettingsCommand());
+$console->add(new \Doctrine\ORM\Tools\Console\Command\GenerateProxiesCommand());
+$console->add(new \Doctrine\ORM\Tools\Console\Command\InfoCommand());
 
 $console->run();
