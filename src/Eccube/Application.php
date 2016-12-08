@@ -500,6 +500,9 @@ class Application extends ApplicationTrait
             // 修正したDriverに差し替える. メソッド名はaddだけど実際はsetしてる.
             $chain->addDriver($newDriver, $namespace);
         }
+
+        $this['orm.em']->getConnection()->getConfiguration()->setSQLLogger( new \Eccube\Log\FirePhp\DoctrineLogger());
+        
     }
 
     public function initSecurity()
