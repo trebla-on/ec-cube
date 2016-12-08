@@ -52,6 +52,8 @@ class DoctrineLogger implements \Doctrine\DBAL\Logging\SQLLogger
     }
 
     public $logger = null;
+    
+    private $microtime = null;
 
     /**
      * {@inheritdoc}
@@ -65,6 +67,7 @@ class DoctrineLogger implements \Doctrine\DBAL\Logging\SQLLogger
         }
         $this->cnt++;
         $this->logger->addInfo('(' . $this->cnt . ') ' . $sql);
+        $this->microtime = microtime(true);
     }
 
     /**
@@ -72,7 +75,7 @@ class DoctrineLogger implements \Doctrine\DBAL\Logging\SQLLogger
      */
     public function stopQuery()
     {
-        
+        $this->logger->addInfo('time='.round((microtime(true) - $this->microtime),4));
     }
 
     private function replace($sql, $param)
