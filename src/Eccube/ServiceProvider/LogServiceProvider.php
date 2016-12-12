@@ -36,6 +36,7 @@ class LogServiceProvider implements ServiceProviderInterface
 
             // EccubeMonologHelper内でHandlerを設定している
             $log->pushHandler($app['eccube.monolog.helper']->getHandler($channelValues));
+            //$log->pushHandler(new \Monolog\Handler\FirePHPHandler());
 
             return $log;
         });

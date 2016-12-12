@@ -234,7 +234,7 @@ class Application extends ApplicationTrait
         $this->register(new \Silex\Provider\SessionServiceProvider(), array(
             'session.storage.save_path' => $this['config']['root_dir'].'/app/cache/eccube/session',
             'session.storage.options' => array(
-                'name' => 'eccube',
+                'name' => $this['config']['cookie_name'],
                 'cookie_path' => $this['config']['root_urlpath'] ?: '/',
                 'cookie_secure' => $this['config']['force_ssl'],
                 'cookie_lifetime' => $this['config']['cookie_lifetime'],
@@ -477,6 +477,9 @@ class Application extends ApplicationTrait
         $this->register(new \Dflydev\Silex\Provider\DoctrineOrm\DoctrineOrmServiceProvider(), array(
             'orm.proxies_dir' => __DIR__.'/../../app/cache/doctrine/proxies',
             'orm.em.options' => $options,
+            'orm.custom.functions.string' => array(
+                'NORMALIZE' => 'Eccube\Doctrine\ORM\Query\Normalize',
+            ),
             'orm.custom.functions.numeric' => array(
                 'EXTRACT' => 'Eccube\Doctrine\ORM\Query\Extract',
             ),
@@ -497,6 +500,9 @@ class Application extends ApplicationTrait
             // 修正したDriverに差し替える. メソッド名はaddだけど実際はsetしてる.
             $chain->addDriver($newDriver, $namespace);
         }
+
+        $this['orm.em']->getConnection()->getConfiguration()->setSQLLogger( new \Eccube\Log\FirePhp\DoctrineLogger());
+        
     }
 
     public function initSecurity()
@@ -538,7 +544,7 @@ class Application extends ApplicationTrait
                 ),
                 'remember_me' => array(
                     'key' => sha1($this['config']['auth_magic']),
-                    'name' => 'eccube_rememberme',
+                    'name' => $this['config']['cookie_name'].'_rememberme',
                     // lifetimeはデフォルトの1年間にする
                     // 'lifetime' => $this['config']['cookie_lifetime'],
                     'path' => $this['config']['root_urlpath'] ?: '/',
