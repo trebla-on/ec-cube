@@ -122,6 +122,9 @@ class AddCartType extends AbstractType
                     if ($data['classcategory_id1']) {
                         $form->add('classcategory_id2', 'choice', array(
                             'label' => $Product->getClassName2(),
+                            'attr' => array(
+                                'onmouseover' => '$(this).width($(this).width() + 1);$(this).width($(this).width() - 1);',
+                            ),
                             'choices' => array('__unselected' => '選択してください') + $Product->getClassCategories2($data['classcategory_id1']),
                         ));
                     }
