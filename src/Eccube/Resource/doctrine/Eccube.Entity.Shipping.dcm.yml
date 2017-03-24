@@ -93,6 +93,9 @@ Eccube\Entity\Shipping:
         shipping_commit_date:
             type: datetime
             nullable: true
+        customer_address_id:
+            type: integer
+            nullable: true
         rank:
             type: integer
             nullable: true

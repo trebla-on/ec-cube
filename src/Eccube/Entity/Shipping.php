@@ -147,6 +147,11 @@ class Shipping extends \Eccube\Entity\AbstractEntity
     private $rank;
 
     /**
+     * @var integer
+     */
+    private $customer_address_id;
+
+    /**
      * @var \DateTime
      */
     private $create_date;
@@ -782,6 +787,29 @@ class Shipping extends \Eccube\Entity\AbstractEntity
     public function getRank()
     {
         return $this->rank;
+    }
+
+    /**
+     * Set customerAddressId
+     *
+     * @param integer $customerAddressId
+     * @return Shipping
+     */
+    public function setCustomerAddressId($customerAddressId)
+    {
+        $this->customerAddressId = $customerAddressId;
+
+        return $this;
+    }
+
+    /**
+     * Get customerAddressId
+     *
+     * @return integer
+     */
+    public function getCustomerAddressId()
+    {
+        return $this->customerAddressId;
     }
 
     /**
