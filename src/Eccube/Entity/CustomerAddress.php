@@ -202,7 +202,7 @@ class CustomerAddress extends \Eccube\Entity\AbstractEntity
     public function setFromShipping(Shipping $Shipping)
     {
         $this
-            ->setSetId($Shipping->getCustomerAddressId())
+            ->setId($Shipping->getCustomerAddressId())
             ->setName01($Shipping->getName01())
             ->setName02($Shipping->getName02())
             ->setKana01($Shipping->getKana01())
