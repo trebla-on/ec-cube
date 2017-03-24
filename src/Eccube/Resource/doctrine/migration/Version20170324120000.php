@@ -30,17 +30,16 @@ use Doctrine\DBAL\Schema\Schema;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-class Version20150806220909 extends AbstractMigration
+class Version20170324120000 extends AbstractMigration
 {
     /**
      * @param Schema $schema
      */
     public function up(Schema $schema)
     {
-        // this up() migration is auto-generated, please modify it to your needs
-        $t=$schema->getTable('dtb_product_class');
-        if(!$t->hasColumn('stock_unlimited') && $t->hasColumn('stock_unlimited_tmp')){
-            $t->addColumn('stock_unlimited', 'smallint', array('NotNull'=>true, 'Default'=>0));
+        $t=$schema->getTable('dtb_shipping');
+        if(!$t->hasColumn('customer_address_id')){
+            $t->addColumn('customer_address_id', 'integer', array('NotNull'=>false));
         }
     }
 
@@ -49,7 +48,9 @@ class Version20150806220909 extends AbstractMigration
      */
     public function down(Schema $schema)
     {
-        // this down() migration is auto-generated, please modify it to your needs
-
+        $t=$schema->getTable('dtb_shipping');
+        if($t->hasColumn('customer_address_id')){
+            $t->dropColumn('customer_address_id');
+        }
     }
 }
