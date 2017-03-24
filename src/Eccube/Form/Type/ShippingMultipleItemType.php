@@ -129,7 +129,7 @@ class ShippingMultipleItemType extends AbstractType
                 if ($app->isGranted('IS_AUTHENTICATED_FULLY')) {
                     $Customer = $app->user();
                     foreach($Customer->getCustomerAddresses() as $CustomerAddress){
-                        if($Shipping->getCustomerAddressId() == $CustomerAddress->getId()){
+                        if($data->getCustomerAddressId() == $CustomerAddress->getId()){
                             $form['customer_address']->setData($CustomerAddress);
                             break;
                         }
@@ -143,7 +143,7 @@ class ShippingMultipleItemType extends AbstractType
                         /** @var \Eccube\Entity\CustomerAddress $CustomerAddress */
                         $i = 0;
                         foreach ($customerAddresses as $CustomerAddress) {
-                            if($Shipping->getCustomerAddressId() == $CustomerAddress->getId()){
+                            if($data->getCustomerAddressId() == $CustomerAddress->getId()){
                                 $form['customer_address']->setData($i);
                                 break;
                             }
