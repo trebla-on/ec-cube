@@ -223,6 +223,7 @@ class Shipping extends \Eccube\Entity\AbstractEntity
     public function setFromCustomerAddress(CustomerAddress $CustomerAddress)
     {
         $this
+            ->setCustomerAddressId($CustomerAddress->getId())
             ->setName01($CustomerAddress->getName01())
             ->setName02($CustomerAddress->getName02())
             ->setKana01($CustomerAddress->getKana01())
@@ -252,6 +253,7 @@ class Shipping extends \Eccube\Entity\AbstractEntity
     public function clearCustomerAddress()
     {
         $this
+            ->setCustomerAddressId(null)
             ->setName01(null)
             ->setName02(null)
             ->setKana01(null)
@@ -790,26 +792,26 @@ class Shipping extends \Eccube\Entity\AbstractEntity
     }
 
     /**
-     * Set customerAddressId
+     * Set customer_address_id
      *
      * @param integer $customerAddressId
      * @return Shipping
      */
     public function setCustomerAddressId($customerAddressId)
     {
-        $this->customerAddressId = $customerAddressId;
+        $this->customer_address_id = $customerAddressId;
 
         return $this;
     }
 
     /**
-     * Get customerAddressId
+     * Get customer_address_id
      *
      * @return integer
      */
     public function getCustomerAddressId()
     {
-        return $this->customerAddressId;
+        return $this->customer_address_id;
     }
 
     /**

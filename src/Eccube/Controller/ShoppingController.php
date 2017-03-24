@@ -572,6 +572,22 @@ class ShoppingController extends AbstractController
             return $app->redirect($app->url('cart'));
         }
 
+        // 顧客アドレスID, Shopping/shipping.twigテンプレートで使ってます
+        $addressId = null;
+        
+        $Order = $app['eccube.service.shopping']->getOrder($app['config']['order_processing']);
+        if (!$Order) {
+            log_info('購入処理中の受注情報がないため購入エラー');
+            $app->addError('front.shopping.order.error');
+
+            return $app->redirect($app->url('shopping_error'));
+        }
+
+        $Shipping = $Order->findShipping($id);
+        if (!$Shipping) {
+            throw new NotFoundHttpException('お届け先情報が存在しない');
+        }
+
         if ('POST' === $request->getMethod()) {
             $address = $request->get('address');
 
@@ -595,19 +611,6 @@ class ShoppingController extends AbstractController
             ));
             if (is_null($CustomerAddress)) {
                 throw new NotFoundHttpException('選択されたお届け先住所が存在しない');
-            }
-
-            $Order = $app['eccube.service.shopping']->getOrder($app['config']['order_processing']);
-            if (!$Order) {
-                log_info('購入処理中の受注情報がないため購入エラー');
-                $app->addError('front.shopping.order.error');
-
-                return $app->redirect($app->url('shopping_error'));
-            }
-
-            $Shipping = $Order->findShipping($id);
-            if (!$Shipping) {
-                throw new NotFoundHttpException('お届け先情報が存在しない');
             }
 
             log_info('お届先情報更新開始', array($Shipping->getId()));
@@ -636,13 +639,22 @@ class ShoppingController extends AbstractController
 
             log_info('お届先情報更新完了', array($Shipping->getId()));
             return $app->redirect($app->url('shopping'));
-        }
+        } else {
+            // Shippingの中に顧客アドレスチェックする
+            foreach($app->user()->getCustomerAddresses() as $Address){
+                if($Shipping->getCustomerAddressId() == $Address->getId()){
+                    // Shippingの中にアドレスあった場合はIDを設定する
+                    $addressId = $Address->getId();
+                }
+            }
+         }
 
         return $app->render(
             'Shopping/shipping.twig',
             array(
                 'Customer' => $app->user(),
                 'shippingId' => $id,
+                'addressId' => $addressId,
                 'error' => false,
             )
         );
@@ -789,6 +801,26 @@ class ShoppingController extends AbstractController
                 $request
             );
             $app['eccube.event.dispatcher']->dispatch(EccubeEvents::FRONT_SHOPPING_SHIPPING_EDIT_COMPLETE, $event);
+            
+            //非会員場合はお届け情報は追加する
+            if (!$app->isGranted('IS_AUTHENTICATED_FULLY')) {
+                // Sessionから住所を取得する
+                $customerAddresses = $app['session']->get($this->sessionCustomerAddressKey);
+                $customerAddresses = unserialize($customerAddresses);
+                $hasAddress = false;
+                // 既に住所あった場合は有フラグを立てる
+                foreach($customerAddresses as $idx => $address){
+                    if($Shipping->getCustomerAddressId() == $address->getId()){
+                        $hasAddress = true;
+                        break;
+                    }
+                }
+                // 登録されてない住所は追加する
+                if($hasAddress === false){
+                    $customerAddresses[] = $CustomerAddress;
+                    $app['session']->set($this->sessionCustomerAddressKey, serialize($customerAddresses));
+                }
+            }
 
             log_info('お届け先追加処理完了', array('id' => $Order->getId(), 'shipping' => $id));
             return $app->redirect($app->url('shopping'));
@@ -988,7 +1020,9 @@ class ShoppingController extends AbstractController
 
             // 非会員複数配送用
             $CustomerAddress = new CustomerAddress();
+            $now = new \DateTime();
             $CustomerAddress
+                ->setId($now->getTimestamp())
                 ->setCustomer($Customer)
                 ->setName01($data['name01'])
                 ->setName02($data['name02'])

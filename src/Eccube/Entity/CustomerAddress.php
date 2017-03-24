@@ -170,6 +170,7 @@ class CustomerAddress extends \Eccube\Entity\AbstractEntity
     public function setFromCustomer(Customer $Customer)
     {
         $this
+            ->setId($Customer->getId())
             ->setCustomer($Customer)
             ->setName01($Customer->getName01())
             ->setName02($Customer->getName02())
@@ -201,6 +202,7 @@ class CustomerAddress extends \Eccube\Entity\AbstractEntity
     public function setFromShipping(Shipping $Shipping)
     {
         $this
+            ->setSetId($Shipping->getCustomerAddressId())
             ->setName01($Shipping->getName01())
             ->setName02($Shipping->getName02())
             ->setKana01($Shipping->getKana01())
@@ -736,5 +738,18 @@ class CustomerAddress extends \Eccube\Entity\AbstractEntity
     public function getPref()
     {
         return $this->Pref;
+    }
+
+    /**
+     * Set id
+     *
+     * @param integer $id
+     * @return CustomerOrderStatus
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+
+        return $this;
     }
 }

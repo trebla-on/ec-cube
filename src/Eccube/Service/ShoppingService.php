@@ -416,6 +416,7 @@ class ShoppingService
 
         if (!is_null($CustomerAddress)) {
             $Shipping
+                ->setCustomerAddressId($CustomerAddress->getId())
                 ->setName01($CustomerAddress->getName01())
                 ->setName02($CustomerAddress->getName02())
                 ->setKana01($CustomerAddress->getKana01())
@@ -434,7 +435,14 @@ class ShoppingService
                 ->setAddr01($CustomerAddress->getAddr01())
                 ->setAddr02($CustomerAddress->getAddr02());
         } else {
+            $CustomerAddress = $Customer->getCustomerAddresses()->first();
+            if($CustomerAddress){
+                $customerAddressId = $CustomerAddress->getId();
+            } else {
+                $customerAddressId = null;
+            }
             $Shipping
+                ->setCustomerAddressId($customerAddressId)
                 ->setName01($Customer->getName01())
                 ->setName02($Customer->getName02())
                 ->setKana01($Customer->getKana01())
